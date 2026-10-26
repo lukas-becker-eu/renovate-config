@@ -1,0 +1,73 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "docker:pinDigests"],
+  "configMigration": true,
+  "schedule": ["at any time"],
+  "timezone": "Europe/Berlin",
+  "labels": ["dependencies"],
+  "abandonmentThreshold": "24 months",
+  "prHourlyLimit": 0,
+  "minimumReleaseAge": "0 days",
+  "internalChecksFilter": "none",
+  "rebaseWhen": "behind-base-branch",
+  "automergeStrategy": "squash",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on Monday"]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "description": "Docker base images: automerge — CI + deploy verify correctness",
+      "matchManagers": ["dockerfile"],
+      "groupName": "docker base images",
+      "automerge": true,
+      "automergeType": "pr",
+      "schedule": ["at any time"]
+    },
+    {
+      "description": "GitHub Actions: automerge when CI passes",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "automerge": true,
+      "automergeType": "pr",
+      "pinDigests": false,
+      "schedule": ["at any time"]
+    },
+    {
+      "description": "Composer patch + minor: automerge",
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "composer packages",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Composer major: manual review",
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "composer packages (major)",
+      "automerge": false
+    },
+    {
+      "description": "npm/bun patch + minor: automerge",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "npm packages",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "npm/bun major: manual review",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "npm packages (major)",
+      "automerge": false
+    }
+  ]
+}
