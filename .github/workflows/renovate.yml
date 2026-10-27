@@ -1,0 +1,84 @@
+name: Renovate
+
+on:
+  workflow_call:
+    inputs:
+      log-level:
+        description: Renovate log level
+        type: string
+        default: info
+    secrets:
+      RENOVATE_CLIENT_ID:
+        required: true
+      RENOVATE_APP_PRIVATE_KEY:
+        required: true
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: [self-hosted, lukasbecker-ci]
+    permissions:
+      contents: write
+      packages: read
+      pull-requests: read
+
+    steps:
+      - name: Clean stale Renovate branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          branches=$(gh api "repos/${REPO}/branches" --paginate \
+            --jq '.[].name' | grep '^renovate/' || true)
+          [ -z "$branches" ] && exit 0
+          while IFS= read -r branch; do
+            pr=$(gh api "repos/${REPO}/pulls?head=${OWNER}:${branch}&state=open" \
+              --jq '.[0].number' 2>/dev/null || echo "")
+            [ -n "$pr" ] && continue
+            gh api -X DELETE "repos/${REPO}/git/refs/heads/${branch}" 2>/dev/null \
+              && echo "Deleted stale branch: ${branch}" || true
+          done <<< "$branches"
+
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ secrets.RENOVATE_CLIENT_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Renovate
+        uses: renovatebot/github-action@v46.3.10
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          LOG_LEVEL: ${{ inputs.log-level }}
+          RENOVATE_HOST_RULES: >-
+            [{"matchHost":"ghcr.io","hostType":"docker","username":"x-access-token","password":"${{ secrets.GITHUB_TOKEN }}"}]
+
+      - name: Alert on stale Renovate PRs
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          stale_prs=$(gh pr list --repo "${REPO}" --label dependencies --state open \
+            --json number,title,createdAt \
+            --jq '[.[] | select((.createdAt | fromdateiso8601) < (now - 7*86400))]' \
+            2>/dev/null || echo "[]")
+          count=$(echo "${stale_prs}" | jq 'length')
+          [ "${count}" -eq 0 ] && exit 0
+          echo "::warning::${count} Renovate PR(s) open >7 days — check Dependency Dashboard"
+          {
+            echo "## Stale Renovate PRs"
+            echo "${count} PR(s) open for more than 7 days (require manual review):"
+            echo ""
+            echo "${stale_prs}" | jq -r '.[] | "- #\(.number) **\(.title)** (since \(.createdAt[:10]))"'
+          } >> "$GITHUB_STEP_SUMMARY"
