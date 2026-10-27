@@ -1,4 +1,4 @@
-name: Renovate
+name: Renovate (Reusable)
 
 on:
   workflow_call:
