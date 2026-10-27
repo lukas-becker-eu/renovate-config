@@ -1,0 +1,15 @@
+name: Renovate
+
+on:
+  schedule:
+    - cron: "0 2,14 * * *" # Daily 02:00 + 14:00 UTC
+  issues:
+    types: [edited] # triggers when Dependency Dashboard checkboxes are clicked
+  workflow_dispatch:
+
+jobs:
+  renovate:
+    uses: lukas-becker-eu/renovate-config/.github/workflows/renovate.yml@main
+    secrets: inherit
+    with:
+      log-level: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
