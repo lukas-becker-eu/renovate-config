@@ -13,7 +13,7 @@
   "automergeStrategy": "squash",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 6am on Monday"]
+    "schedule": ["at any time"]
   },
   "vulnerabilityAlerts": {
     "enabled": true,
