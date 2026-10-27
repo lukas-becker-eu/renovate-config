@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/lukas-becker-eu/renovate-config/compare/v0.0.2...v0.0.3) (2026-10-27)
+
+
+### Features
+
+* add semanticCommits, hide ci/chore in changelog ([6cbd30d](https://github.com/lukas-becker-eu/renovate-config/commit/6cbd30dc224cf3016102cebbd34704100a3cd9a1))
+
 ## [0.0.2](https://github.com/lukas-becker-eu/renovate-config/compare/v0.0.1...v0.0.2) (2026-10-27)
 
 
