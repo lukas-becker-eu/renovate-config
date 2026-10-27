@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.2](https://github.com/lukas-becker-eu/renovate-config/compare/v0.0.1...v0.0.2) (2026-10-27)
+
+
+### Features
+
+* add Claude Code hooks, AGENTS.md, and README ([621d9b8](https://github.com/lukas-becker-eu/renovate-config/commit/621d9b8f1351d44dfc94add3a8033e8a6013ab70))
+
+
+### Bug Fixes
+
+* **release:** use patch bumps for feat commits pre-major (0.x) ([5a36229](https://github.com/lukas-becker-eu/renovate-config/commit/5a362294f29eb665777cc280bc0a5ed855223060))
+
 ## 0.0.1 (2026-10-27)
 
 
