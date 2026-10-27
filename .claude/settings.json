@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": { "commit": "", "pr": "", "sessionUrl": false },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git fetch*)",
+      "Bash(git checkout*)",
+      "Bash(git branch*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git rebase*)",
+      "Bash(git pull*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr merge*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh pr view*)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)"
+    ],
+    "defaultMode": "default"
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(gh pr merge*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh pr view*)",
+      "Bash(git push*)",
+      "SendMessage"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/pre.sh .claude/hooks/guard-no-commit-main.ts" },
+          { "type": "command", "command": "bash .claude/hooks/pre.sh .claude/hooks/guard-no-force-push.ts" },
+          { "type": "command", "command": "bash .claude/hooks/pre.sh .claude/hooks/guard-ci-gate.ts" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/post.sh .claude/hooks/enforce-conventional-commits.ts" },
+          { "type": "command", "command": "bash .claude/hooks/post.sh .claude/hooks/post-merge-cleanup.ts" }
+        ]
+      }
+    ]
+  }
+}
