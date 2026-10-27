@@ -11,6 +11,7 @@
   "internalChecksFilter": "none",
   "rebaseWhen": "behind-base-branch",
   "automergeStrategy": "squash",
+  "semanticCommits": "enabled",
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["at any time"],
