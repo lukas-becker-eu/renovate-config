@@ -1,0 +1,12 @@
+{
+  "name": "claude-hooks",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "1.2.14",
+    "typescript": "5.4.5"
+  }
+}
