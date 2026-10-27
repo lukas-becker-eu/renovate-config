@@ -13,7 +13,9 @@
   "automergeStrategy": "squash",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["at any time"]
+    "schedule": ["at any time"],
+    "automerge": true,
+    "automergeType": "pr"
   },
   "vulnerabilityAlerts": {
     "enabled": true,
